@@ -4,7 +4,7 @@ import { Overlay, Modals, ModalImg } from './Modal.style';
 
 const modalRoot = document.getElementById('root');
 
-export default function Modal({ onClose, imageUrlLarge, imageTitle }) {
+export default function Modal({ onClose,titleModalImg, urlModalImg }) {
   
   useEffect(() => {
     document.addEventListener('keydown', closeModal);
@@ -22,7 +22,7 @@ export default function Modal({ onClose, imageUrlLarge, imageTitle }) {
         return createPortal(
         <Overlay  onClick={closeModal}>
                   <Modals>
-              <ModalImg src={imageUrlLarge} alt={imageTitle} />
+              <ModalImg src={urlModalImg} alt={titleModalImg} />
                   </Modals>
               </Overlay>,
         modalRoot

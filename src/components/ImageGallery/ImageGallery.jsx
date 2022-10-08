@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Dna  } from  'react-loader-spinner';
 import fetchKey from '../Fetch';
@@ -15,79 +15,62 @@ export default function ImageGallery({ searchName }) {
     const [urlLarge, setUrlLarge] = useState('');
     const [title, setTitle] = useState('');
 
-    const prevPage = usePrevious(page);
-    const prevSearchName = usePrevious(searchName);
-    
-    
     useEffect(() => {
+      setPage(1);
+      setImages([]);
+    }, [searchName]);
 
+    useEffect(() => {
+      if (!searchName) {
+        setImages([]);
+        return;
+      }
         const fetchImages = async (currentName, currentPage) => {
+          try {
             setLoading(true);
-            try {
-                const result = await fetchKey(currentName, currentPage);
-                const items = result.hits;
-                if (items.length === 0) {
-                    return toast.warn("Any images not found! Try again, please.");
-                }
-                if (currentPage === 1) {
-                    setImages([...items]);
-                } else {
-                    setImages(prev => [...prev, ...items]);
-                }
-            } catch (error) {
-                setError(error);
-            } finally {
-                setLoading(false);
+            const result = await fetchKey(currentName, currentPage);
+            const items = result.hits;
+            setImages(prevItems => {
+              return [...prevItems, ...items];
+            });
+            if (items.length === 0) {
+              return toast.warn(
+                "Any images not found! Try again, please."
+              );
             }
+          } catch (error) {
+            setError(error);
+          } finally {
+            setLoading(false);
+          }
         };
-
-        if (!searchName) {
-            return;
-        }       
-        if (page > prevPage) {
-            fetchImages(searchName, page);
-            return;
-        }
-        if ((prevSearchName !== searchName) && page === prevPage) {
-            fetchImages(searchName, 1);
-            resetPage();
-            return;
-        }
-        
-    }, [searchName, page, prevPage, prevSearchName]);
-
-   
-    const resetPage = () => {
-        setPage(1);
-    }
-
-    const openModal = (urlLarge, title) => {
+        fetchImages(searchName, page);
+      }, [searchName, page]);
+    
+      
+      const openModal = (urlLarge, title) => {
         setShowModal(true);
         setUrlLarge(urlLarge);
         setTitle(title);
-    }
-    const closeModal = () => {
+      };
+      
+
+      const closeModal = () => {
         setShowModal(false);
         setUrlLarge('');
         setTitle('');
-    }
+      };
+    
+      const loadMore = () => {
+        setPage(state => state + 1);
+      };
 
-    const loadMore = () => {
-        setPage((prev) => prev + 1);
-    }
+      const isImages = Boolean(images.length);
 
-    function usePrevious(value) {
-        const ref = useRef();
-        useEffect(() => {
-            ref.current = value;
-        });
-        return ref.current;
-    }
-
-    const isImages = Boolean(images.length);
+        
         return (
             <div>              
-                {error && <p className="notification">Try later, please.</p>}
+                {error && <p>Try later, please.</p>}
                 {images && <ImageList items={images} onClick={openModal} />}    
                 {isImages && <Button text="Load more..." onClick={loadMore} />}
                 {loading && <Dna
@@ -97,9 +80,7 @@ export default function ImageGallery({ searchName }) {
                                 ariaLabel="dna-loading"
                                 wrapperStyle={{}}
                                 wrapperClass="dna-wrapper" />}
-                {showModal && <Modal onClose={closeModal} urlModalImg={urlLarge} dscModalImg={title} />}
+                {showModal && <Modal onClose={closeModal} urlModalImg={urlLarge} titleModalImg={title} />}
             </div>
-        )
-    }
-   
-        
+        );
+                }

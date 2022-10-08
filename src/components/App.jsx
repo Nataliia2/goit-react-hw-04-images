@@ -17,7 +17,7 @@ export function App() {
       <div className="App">
         <Search onSubmit={handleSubmitSearchForm} />
         <ImageGallery searchName={searchName} />
-        <ToastContainer autoClose={4000} />
+        <ToastContainer autoClose={3000} />
       </div>
   );
   }

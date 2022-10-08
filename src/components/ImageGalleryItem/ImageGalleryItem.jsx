@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import {GalleryItem, Img} from './ImageGalleryItem.style';
 
-export default function ImageGaleryItem({ imageURL, imageTitle, imageUrlLarge, onClickItem }) {
+export default function ImageGaleryItem({ 
+    imageURL, 
+    imageTitle, 
+    imageUrlLarge, 
+    onClickItem }) {
     return  <GalleryItem onClick={() => {onClickItem({imageUrlLarge, imageTitle})}}>
                 <Img src={imageURL} alt={imageTitle} />
             </GalleryItem>
