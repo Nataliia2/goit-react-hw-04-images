@@ -6,7 +6,7 @@ export default function ImageGaleryItem({
     imageTitle, 
     imageUrlLarge, 
     onClickItem }) {
-    return  <GalleryItem onClick={() => {onClickItem({imageUrlLarge, imageTitle})}}>
+    return  <GalleryItem onClick={() => {onClickItem()}}>
                 <Img src={imageURL} alt={imageTitle} />
             </GalleryItem>
 }
